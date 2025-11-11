@@ -19,35 +19,35 @@ namespace Database.Implements
         }
 
         //Будет использоваться для подгрузки участников мероприятия
-        //public async Task<List<UserViewModel>> GetFilteredList(UserSearchModel model)
-        //{
-        //    using var context = new Database();
+        public async Task<List<UserViewModel>> GetFilteredList(UserSearchModel model)
+        {
+            using var context = new Database();
 
-        //    var query = context.Users.AsQueryable();
+            var query = context.Users.AsQueryable();
 
-        //    if (model.Id.HasValue)
-        //    {
-        //        query = query.Where(x => x.Id == model.Id.Value);
-        //    }
-        //    if (!string.IsNullOrEmpty(model.Username))
-        //    {
-        //        var usernameLower = model.Username.ToLower();
-        //        query = query.Where(x => x.Username.ToLower().Contains(usernameLower));
-        //    }
-        //    if (!string.IsNullOrEmpty(model.Email))
-        //    {
-        //        var emailLower = model.Email.ToLower();
-        //        query = query.Where(x => x.Email.ToLower().Contains(emailLower));
-        //    }
-        //    if (!string.IsNullOrEmpty(model.PasswordHash))
-        //    {
-        //        var hash = model.PasswordHash;
-        //        query = query.Where(x => x.PasswordHash.Contains(hash));
-        //    }
+            if (model.Id.HasValue)
+            {
+                query = query.Where(x => x.Id == model.Id.Value);
+            }
+            if (!string.IsNullOrEmpty(model.Username))
+            {
+                var usernameLower = model.Username.ToLower();
+                query = query.Where(x => x.Username.ToLower().Contains(usernameLower));
+            }
+            if (!string.IsNullOrEmpty(model.Email))
+            {
+                var emailLower = model.Email.ToLower();
+                query = query.Where(x => x.Email.ToLower().Contains(emailLower));
+            }
+            if (!string.IsNullOrEmpty(model.PasswordHash))
+            {
+                var hash = model.PasswordHash;
+                query = query.Where(x => x.PasswordHash.Contains(hash));
+            }
 
-        //    var result = await query.Select(x => x.GetViewModel).ToListAsync();
-        //    return result;
-        //}
+            var result = await query.Select(x => x.GetViewModel).ToListAsync();
+            return result;
+        }
         public async Task<UserViewModel?> GetElement(UserSearchModel model)
         {
             using var context = new Database();

@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решен
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic", "BusinessLogic\BusinessLogic.csproj", "{90C77539-77BD-464D-926D-EA9B37827F7A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{DA561A74-4C53-45CB-AB1B-E2738818752B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA561A74-4C53-45CB-AB1B-E2738818752B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA561A74-4C53-45CB-AB1B-E2738818752B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90C77539-77BD-464D-926D-EA9B37827F7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90C77539-77BD-464D-926D-EA9B37827F7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90C77539-77BD-464D-926D-EA9B37827F7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90C77539-77BD-464D-926D-EA9B37827F7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
