@@ -1,0 +1,34 @@
+# Client-side libraries
+lib/
+libman.json
+libman-lock.json
+
+# Package managers
+node_modules/
+bower_components/
+
+# ASP.NET Core
+bin/
+obj/
+*.user
+*.suo
+*.vssscc
+*.csproj.user
+.vs/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+*.sql
+
+# NuGet
+.nuget/
+*.nupkg
+packages/
+
+# Other
+*.swp
+*.swo
+*~
+._*
+.DS_Store
