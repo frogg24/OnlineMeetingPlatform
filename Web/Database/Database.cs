@@ -1,12 +1,26 @@
-﻿using System;
+﻿using Database.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Database
 {
-    internal class Database
+    public class Database: DbContext
     {
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (optionsBuilder.IsConfigured == false)
+            {
+                optionsBuilder.UseNpgsql(@"Host=localhost;Database=OnlineProjects_db;Username=postgres;Password=postgres");
+            }
+            base.OnConfiguring(optionsBuilder);
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+        }
+        public virtual DbSet<User> Users { set; get; }
     }
 }

@@ -8,6 +8,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataModels", "DataModels\DataModels.csproj", "{E2F08569-216E-488A-A824-EF19D65BE11A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database", "Database\Database.csproj", "{DA561A74-4C53-45CB-AB1B-E2738818752B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E2F08569-216E-488A-A824-EF19D65BE11A} = {E2F08569-216E-488A-A824-EF19D65BE11A}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{754FC069-D67B-A9D7-50A1-8D1CA196D8F1}"
 	ProjectSection(SolutionItems) = preProject
