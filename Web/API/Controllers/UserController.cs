@@ -56,7 +56,7 @@ namespace API.Controllers
             }
             catch (System.Exception ex)
             {
-                return StatusCode(500, new { message = "Внутренняя ошибка сервера" });
+                return StatusCode(500, new { message = ex.Message + ex.InnerException?.Message + ex.InnerException?.StackTrace });
             }
         }
 

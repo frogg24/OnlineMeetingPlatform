@@ -1,5 +1,6 @@
 ﻿using Database.Implements;
 using DataModels.Models;
+using DataModels.Storages;
 using DataModels.SearchModels;
 using DataModels.Services;
 
@@ -7,9 +8,9 @@ namespace BusinessLogic
 {
     public class UserLogic: IUserService
     {   
-        private readonly UserStorage _UserStorage;
+        private readonly IUserStorage _UserStorage;
 
-        public UserLogic(UserStorage UserStorage)
+        public UserLogic(IUserStorage UserStorage)
         {
             _UserStorage = UserStorage;
         }

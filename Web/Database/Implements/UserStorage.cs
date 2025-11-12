@@ -1,6 +1,8 @@
 ﻿using Database.Models;
 using DataModels.Models;
+using DataModels.Storages;
 using DataModels.SearchModels;
+using DataModels.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Database.Implements
 {
-    public class UserStorage
+    public class UserStorage: IUserStorage
     {
         public async Task<List<UserViewModel>> GetFullList()
         {
@@ -66,8 +68,16 @@ namespace Database.Implements
 
             if (!string.IsNullOrEmpty(model.Email))
             {
-                var tec = await context.Users.FirstOrDefaultAsync(x => x.Email.Equals(model.Email));
-                return tec?.GetViewModel;
+                try
+                {
+                    var tec = await context.Users.FirstOrDefaultAsync(x => x.Email.Equals(model.Email));
+                    return tec?.GetViewModel;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ошибка в GetElement (FirstOrDefaultAsync): {ex}");
+                    throw;
+                }
             }
             return null;
         }

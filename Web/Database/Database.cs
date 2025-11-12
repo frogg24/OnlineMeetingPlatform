@@ -14,7 +14,7 @@ namespace Database
         {
             if (optionsBuilder.IsConfigured == false)
             {
-                optionsBuilder.UseNpgsql(@"Host=localhost;Database=OnlineProjects_db;Username=postgres;Password=postgres");
+                optionsBuilder.UseNpgsql(@"Host=localhost;Port=5432;Database=OnlineProjects_db;Username=postgres;Password=postgres");
             }
             base.OnConfiguring(optionsBuilder);
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
