@@ -29,16 +29,15 @@
                             <p class="mb-0">Присоединяйтесь к нашей платформе</p>
                         </div>
                         <div class="card-body p-4">
-                            <form>
-
+                            <form method="post" action="/Home/Login">
                                 <!-- Name Input -->
                                 <div class="mb-3">
-                                    <label for="nameInput" class="form-label">Ваше имя</label>
+                                    <label for="nameInput" class="form-label">Ваша эл. почта</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="name-addon">
                                             <i data-feather="user"></i>
                                         </span>
-                                        <input type="text" class="form-control" id="nameInput" required>
+                                        <input type="text" class="form-control" id="nameInput" name="email" required>
                                     </div>
                                 </div>
 
@@ -50,7 +49,7 @@
                                             <span class="input-group-text" id="password-addon">
                                                 <i data-feather="lock"></i>
                                             </span>
-                                            <input type="password" class="form-control" id="passwordInput" required>
+                                            <input type="password" class="form-control" id="passwordInput" name="password" required>
                                         </div>
                                         <span class="password-toggle" onclick="togglePassword('passwordInput', this)">
                                             <i data-feather="eye"></i>
@@ -58,7 +57,7 @@
                                     </div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
+                                <button type="submit" class="btn btn-primary w-100">Войти</button>
                             </form>
 
                             <div class="already-have-account">
@@ -88,18 +87,6 @@
             }
             feather.replace();
         }
-
-        // Проверка совпадения паролей
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const password = document.getElementById('passwordInput').value;
-            const confirmPassword = document.getElementById('confirmPasswordInput').value;
-            if (password !== confirmPassword) {
-                e.preventDefault();
-                document.getElementById('confirmPasswordInput').classList.add('is-invalid');
-            } else {
-                document.getElementById('confirmPasswordInput').classList.remove('is-invalid');
-            }
-        });
     </script>
 </body>
 </html>

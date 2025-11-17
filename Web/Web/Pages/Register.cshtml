@@ -1,8 +1,7 @@
 ﻿@page
 @{
-    ViewData["Title"] = "Вход";
+    ViewData["Title"] = "Регистрация";
 }
-@using Microsoft.AspNetCore.Http
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -29,19 +28,16 @@
                             <p class="mb-0">Присоединяйтесь к нашей платформе</p>
                         </div>
                         <div class="card-body p-4">
-                            <form>
-                                <!-- Поля формы остаются такими же -->
+                            <!-- Изменяем форму для отправки на сервер -->
+                            <form method="post" action="/Home/Register">
                                 <!-- Email Input -->
                                 <div class="mb-3">
                                     <label for="emailInput" class="form-label">Email адрес</label>
                                     <div class="input-group">
-                                        <span class="input-group-text" id="email-addon">
+                                        <span class="input-group-text">
                                             <i data-feather="mail"></i>
                                         </span>
-                                        <input type="email" class="form-control" id="emailInput" required>
-                                    </div>
-                                    <div class="invalid-feedback">
-                                        Пожалуйста, введите действительный email.
+                                        <input type="email" class="form-control" id="emailInput" name="email" required>
                                     </div>
                                 </div>
 
@@ -49,10 +45,10 @@
                                 <div class="mb-3">
                                     <label for="nameInput" class="form-label">Ваше имя</label>
                                     <div class="input-group">
-                                        <span class="input-group-text" id="name-addon">
+                                        <span class="input-group-text">
                                             <i data-feather="user"></i>
                                         </span>
-                                        <input type="text" class="form-control" id="nameInput" required>
+                                        <input type="text" class="form-control" id="nameInput" name="username" required>
                                     </div>
                                 </div>
 
@@ -61,12 +57,12 @@
                                     <label for="passwordInput" class="form-label">Пароль</label>
                                     <div class="position-relative">
                                         <div class="input-group">
-                                            <span class="input-group-text" id="password-addon">
+                                            <span class="input-group-text">
                                                 <i data-feather="lock"></i>
                                             </span>
-                                            <input type="password" class="form-control" id="passwordInput" required>
+                                            <input type="password" class="form-control" id="passwordInput" name="password" required>
                                         </div>
-                                        <span class="password-toggle" onclick="togglePassword('passwordInput', this)">
+                                        <span class="password-toggle" onclick="togglePassword('passwordInput')">
                                             <i data-feather="eye"></i>
                                         </span>
                                     </div>
@@ -78,25 +74,25 @@
                                     <label for="confirmPasswordInput" class="form-label">Подтвердите пароль</label>
                                     <div class="position-relative">
                                         <div class="input-group">
-                                            <span class="input-group-text" id="confirm-password-addon">
+                                            <span class="input-group-text">
                                                 <i data-feather="lock"></i>
                                             </span>
-                                            <input type="password" class="form-control" id="confirmPasswordInput" required>
+                                            <input type="password" class="form-control" id="confirmPasswordInput" name="confirmPassword" required>
                                         </div>
-                                        <span class="password-toggle" onclick="togglePassword('confirmPasswordInput', this)">
+                                        <span class="password-toggle" onclick="togglePassword('confirmPasswordInput')">
                                             <i data-feather="eye"></i>
                                         </span>
                                     </div>
-                                    <div class="invalid-feedback">
+                                    <div class="invalid-feedback" id="passwordError">
                                         Пароли не совпадают.
                                     </div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
+                                <button type="submit" class="btn btn-primary w-100" id="submitButton">Зарегистрироваться</button>
                             </form>
 
                             <div class="already-have-account">
-                                Уже есть аккаунт? <a href="/Login">Войти</a>
+                                Уже есть аккаунт? <a href="/Account/SignIn">Войти</a>
                             </div>
                         </div>
                     </div>
@@ -106,13 +102,28 @@
     </div>
 
     <script>
-        // Инициализация Feather Icons
-        feather.replace();
+        // Ждем загрузки DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация Feather Icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+
+            // Обработчик формы для клиентской валидации
+            const registerForm = document.querySelector('form');
+            if (registerForm) {
+                registerForm.addEventListener('submit', handleFormSubmit);
+            }
+        });
 
         // Функция для переключения видимости пароля
-        function togglePassword(inputId, toggleElement) {
+        function togglePassword(inputId) {
             const passwordInput = document.getElementById(inputId);
-            const icon = toggleElement.querySelector('i');
+            if (!passwordInput) return;
+
+            const icon = document.querySelector(`[onclick="togglePassword('${inputId}')"] i`);
+            if (!icon) return;
+
             if (passwordInput.type === "password") {
                 passwordInput.type = "text";
                 icon.setAttribute('data-feather', 'eye-off');
@@ -120,20 +131,35 @@
                 passwordInput.type = "password";
                 icon.setAttribute('data-feather', 'eye');
             }
-            feather.replace();
+
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
         }
 
-        // Проверка совпадения паролей
-        document.querySelector('form').addEventListener('submit', function(e) {
+        // Клиентская валидация перед отправкой
+        function handleFormSubmit(e) {
             const password = document.getElementById('passwordInput').value;
             const confirmPassword = document.getElementById('confirmPasswordInput').value;
+            const passwordError = document.getElementById('passwordError');
+
             if (password !== confirmPassword) {
                 e.preventDefault();
                 document.getElementById('confirmPasswordInput').classList.add('is-invalid');
+                passwordError.style.display = 'block';
+                return false;
             } else {
                 document.getElementById('confirmPasswordInput').classList.remove('is-invalid');
+                passwordError.style.display = 'none';
             }
-        });
+
+            // Блокируем кнопку на время отправки
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Регистрация...';
+
+            return true;
+        }
     </script>
 </body>
 </html>
