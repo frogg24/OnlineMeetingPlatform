@@ -1,12 +1,13 @@
 ﻿using DataModels.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Web.Controllers
 {
     public class HomeController:Controller
     {
         [HttpPost]
-        public void Register(string username, string password, string email, string confirmPassword)
+        public IActionResult Register(string username, string password, string email, string confirmPassword)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(confirmPassword))
             {
@@ -25,8 +26,7 @@ namespace Web.Controllers
                 ConfirmPassword = confirmPassword
             };
             APIClient.PostRequest("api/User/register", regReq);
-            Response.Redirect("/Login");
-            return;
+            return Redirect("/Login");
         }
 
         [HttpPost]
@@ -46,9 +46,39 @@ namespace Web.Controllers
                 };
 
 
-                APIClient.PostRequest("api/User/login", loginRequest);
-                //HttpContext.Session.SetString("UserEmail", email);
+                var response = APIClient.PostRequest("api/User/login", loginRequest);
 
+                var loginResponse = JsonConvert.DeserializeObject<LoginResponse>(response);
+
+                if (loginResponse?.User == null)
+                {
+                    throw new Exception("Неверный ответ от сервера: информация о пользователе не получена");
+                }
+
+                string temporaryToken = loginResponse.User.Id.ToString();
+
+                Response.Cookies.Append("AuthToken", temporaryToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = false,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTimeOffset.Now.AddDays(7)
+                });
+
+                Response.Cookies.Append("UserEmail", loginResponse.User.Email, new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddDays(7)
+                });
+
+                Response.Cookies.Append("UserId", loginResponse.User.Id.ToString(), new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddDays(7)
+                });
+
+                Response.Cookies.Append("Username", loginResponse.User.Username.ToString(), new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddDays(7)
+                });
 
                 return Redirect("/Index");
             }
@@ -58,5 +88,30 @@ namespace Web.Controllers
                 return View();
             }
         }
+
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("AuthToken");
+            Response.Cookies.Delete("UserEmail");
+            Response.Cookies.Delete("UserId");
+            Response.Cookies.Delete("Username");
+
+            APIClient.Client = null;
+
+            return Redirect("/Login");
+        }
+    }
+
+    public class LoginResponse
+    {
+        public string Message { get; set; }
+        public UserData User { get; set; }
+    }
+
+    public class UserData
+    {
+        public int Id { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
     }
 }

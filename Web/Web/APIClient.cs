@@ -30,7 +30,7 @@ namespace Web
                 throw new Exception(result);
             }
         }
-        public static void PostRequest<T>(string requestUrl, T model)
+        public static string PostRequest<T>(string requestUrl, T model)
         {
             var json = JsonConvert.SerializeObject(model);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
@@ -40,7 +40,7 @@ namespace Web
             {
                 throw new Exception(result);
             }
-
+            return result;
         }
     }
 }
