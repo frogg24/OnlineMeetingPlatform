@@ -195,8 +195,9 @@ body {
 .dashboard-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 2rem 0;
+    padding: 2rem;
     margin-bottom: 2rem;
+    border-radius: 15px;
 }
 
 .section-card {
