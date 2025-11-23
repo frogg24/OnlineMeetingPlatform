@@ -1,0 +1,289 @@
+﻿@page
+@{
+    ViewData["Title"] = "Личный кабинет";
+}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Платформа мероприятий</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    
+</head>
+<body>
+    @{
+        await Html.RenderPartialAsync("Header");
+    }
+
+    <main class="main-content">
+        <div class="container">
+            <div class="dashboard-header">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center">
+                            @{
+                                var username = HttpContext.Request.Cookies["Username"];
+                                var userEmail = HttpContext.Request.Cookies["UserEmail"];
+                                var displayName = !string.IsNullOrEmpty(username)
+                                ? username
+                                : !string.IsNullOrEmpty(userEmail)
+                                ? userEmail
+                                : "Пользователь";
+                                var firstLetter = displayName[0].ToString().ToUpper();
+                            }
+
+                            <div class="me-3">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                     style="width: 56px; height: 56px; font-size: 24px;">
+                                    @firstLetter
+                                </div>
+                            </div>
+
+                            <div>
+                                <h1 class="welcome-title mb-2">
+                                    Добро пожаловать, <span class="username-highlight">@displayName</span>!
+                                </h1>
+                                <p class="welcome-subtitle">Это ваш личный кабинет на платформе мероприятий</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Уведомления вынесены ВПРАВО -->
+                    <div class="col-md-4 text-md-end">
+                        <div class="notification-widget d-inline-flex align-items-center gap-2 p-2 rounded-pill bg-opacity-15 border border-white border-opacity-25">
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input" type="checkbox" id="notificationToggle" checked>
+                                <label class="form-check-label small fw-medium" for="notificationToggle">
+                                    <i data-feather="bell" class="feather-icon me-1" style="width: 16px; height: 16px;"></i>
+                                    Уведомления
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Раздел участника -->
+            <div class="section-card card mb-5">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i data-feather="users" class="me-2"></i>
+                        Раздел участника
+                    </h3>
+                </div>
+                <div class="card-body">
+                    @if (true) // Запрос на мероприятия участника
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Название мероприятия</th>
+                                        <th>Дата</th>
+                                        <th>Ссылка</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Примеры мероприятий участника -->
+                                    <tr>
+                                        <td>Конференция по технологиям</td>
+                                        <td>25.11.2025</td>
+                                        <td>https:/example.com</td>
+                                        <td>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="leaveEvent(1)">
+                                                <i data-feather="x" width="16" height="16"></i> Отказаться
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Семинар по маркетингу</td>
+                                        <td>28.11.2025</td>
+                                        <td>https:/example.com</td>
+                                        <td>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="leaveEvent(2)">
+                                                <i data-feather="x" width="16" height="16"></i> Отказаться
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Мастер-класс по программированию</td>
+                                        <td>02.12.2025</td>
+                                        <td>https:/example.com</td>
+                                        <td>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="leaveEvent(3)">
+                                                <i data-feather="x" width="16" height="16"></i> Отказаться
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i data-feather="calendar" width="48" height="48" class="text-muted mb-3"></i>
+                            <h5 class="text-muted">Вы не участвуете ни в каких мероприятиях</h5>
+                            <p class="text-muted">Найдите интересные мероприятия и присоединяйтесь к ним!</p>
+                            <a href="/Events" class="btn btn-primary">Найти мероприятия</a>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Раздел организатора -->
+            <div class="section-card card mb-5">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i data-feather="calendar-plus" class="me-2"></i>
+                        Раздел организатора
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <a href="/Events/Create" class="btn btn-success">
+                            <i data-feather="plus" class="me-1"></i>
+                            Создать мероприятие
+                        </a>
+                    </div>
+
+                    @if (true) // Запрос на мероприятия пользователя
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Название мероприятия</th>
+                                        <th>Дата</th>
+                                        <th>Участники</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Примеры мероприятий организатора -->
+                                    <tr>
+                                        <td>Вебинар по искусственному интеллекту</td>
+                                        <td>15.12.2025</td>
+                                        <td>23</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="/Events/Edit/1" class="btn btn-outline-primary btn-sm">
+                                                    <i data-feather="edit" width="14" height="14"></i>
+                                                </a>
+                                                <a href="/Events/View/1" class="btn btn-outline-info btn-sm">
+                                                    <i data-feather="eye" width="14" height="14"></i>
+                                                </a>
+                                                <button class="btn btn-outline-danger btn-sm" onclick="deleteEvent(1)">
+                                                    <i data-feather="trash-2" width="14" height="14"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Хакатон "Инновации 2025"</td>
+                                        <td>20.12.2025</td>
+                                        <td>45</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="/Events/Edit/2" class="btn btn-outline-primary btn-sm">
+                                                    <i data-feather="edit" width="14" height="14"></i>
+                                                </a>
+                                                <a href="/Events/View/2" class="btn btn-outline-info btn-sm">
+                                                    <i data-feather="eye" width="14" height="14"></i>
+                                                </a>
+                                                <button class="btn btn-outline-danger btn-sm" onclick="deleteEvent(2)">
+                                                    <i data-feather="trash-2" width="14" height="14"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i data-feather="calendar-plus" width="48" height="48" class="text-muted mb-3"></i>
+                            <h5 class="text-muted">Вы не создавали мероприятий</h5>
+                            <p class="text-muted">Создайте свое первое мероприятие и начните принимать участников!</p>
+                            <a href="/Events/Create" class="btn btn-success">
+                                <i data-feather="plus" class="me-1"></i>
+                                Создать мероприятие
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Модальное окно подтверждения -->
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтверждение действия</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-danger" id="confirmAction">Подтвердить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Инициализация Feather Icons
+        feather.replace();
+
+        // Переключение уведомлений
+        document.getElementById('notificationToggle').addEventListener('change', function() {
+            const isChecked = this.checked;
+            // Здесь можно добавить AJAX-запрос для сохранения предпочтений
+            console.log('Уведомления:', isChecked ? 'включены' : 'выключены');
+        });
+
+        // Функция для отказа от участия в мероприятии
+        function leaveEvent(eventId) {
+            document.getElementById('modalMessage').textContent = 'Вы уверены, что хотите отказаться от участия в этом мероприятии?';
+            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+
+            document.getElementById('confirmAction').onclick = function() {
+                // Здесь можно добавить AJAX-запрос для отказа от участия
+                console.log('Отказ от участия в мероприятии:', eventId);
+                modal.hide();
+                // Можно добавить обновление страницы или удаление строки из таблицы
+                location.reload();
+            };
+
+            modal.show();
+        }
+
+        // Функция для удаления мероприятия
+        function deleteEvent(eventId) {
+            document.getElementById('modalMessage').textContent = 'Вы уверены, что хотите удалить это мероприятие? Это действие необратимо.';
+            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+
+            document.getElementById('confirmAction').onclick = function() {
+                // Здесь можно добавить AJAX-запрос для удаления мероприятия
+                console.log('Удаление мероприятия:', eventId);
+                modal.hide();
+                // Можно добавить обновление страницы или удаление строки из таблицы
+                location.reload();
+            };
+
+            modal.show();
+        }
+    </script>
+</body>
+</html>

@@ -24,8 +24,8 @@
                 @if (isLoggedIn)
                 {
                     <div class="d-flex align-items-center gap-3">
-                        <span class="text-muted me-2">Привет, @displayName!</span>
-                        <a href="/Participant/Dashboard" class="btn btn-link p-0">
+                        <span class="text-muted me-2">@displayName!</span>
+                        <a href="/Account" class="btn btn-link p-0">
                             
                             <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 14px;">
                                 @displayName[0].ToString().ToUpper()
