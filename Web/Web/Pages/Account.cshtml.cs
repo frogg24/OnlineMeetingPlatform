@@ -15,7 +15,7 @@ namespace Web.Pages
         [TempData]
         public string StatusMessage { get; set; }
 
-        public void OnGet()
+        public async Task OnGet()
         {
             var userIdCookie = Request.Cookies["UserId"];
 
@@ -25,17 +25,17 @@ namespace Web.Pages
                 {
                     // ѕолучаем меропри€ти€, где пользователь €вл€етс€ организатором
                     var userMeetingsUrl = $"api/meeting/getlist?managerId={userId}";
-                    UserMeetings = APIClient.GetRequest<List<MeetingViewModel>>(userMeetingsUrl) ?? new List<MeetingViewModel>();
+                    UserMeetings = await APIClient.GetAsync<List<MeetingViewModel>>(userMeetingsUrl) ?? new List<MeetingViewModel>();
 
                     // ѕолучаем меропри€ти€, в которых участвует пользователь
                     var participantMeetingsUrl = $"api/meeting/getlistusers?userId={userId}";
-                    UserMeetingParticipations = APIClient.GetRequest<List<MeetingUserViewModel>>(participantMeetingsUrl) ?? new List<MeetingUserViewModel>();
+                    UserMeetingParticipations = await APIClient.GetAsync<List<MeetingUserViewModel>>(participantMeetingsUrl) ?? new List<MeetingUserViewModel>();
 
                     // ƒл€ каждого участи€ получаем полную информацию о меропри€тии
                     foreach (var meetingUser in UserMeetingParticipations)
                     {
                         var meetingUrl = $"api/meeting/getlist?id={meetingUser.MeetingId}";
-                        var meetings = APIClient.GetRequest<List<MeetingViewModel>>(meetingUrl);
+                        var meetings = await APIClient.GetAsync<List<MeetingViewModel>>(meetingUrl);
                         if (meetings != null && meetings.Any())
                         {
                             ParticipantMeetings.AddRange(meetings);

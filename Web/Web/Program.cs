@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-APIClient.Connect(builder.Configuration);
+APIClient.Initialize(builder.Configuration);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

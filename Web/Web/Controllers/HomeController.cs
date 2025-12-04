@@ -5,10 +5,10 @@ using Web.Models;
 
 namespace Web.Controllers
 {
-    public class HomeController:Controller
+    public class HomeController : Controller
     {
         [HttpPost]
-        public IActionResult Register(string username, string password, string email, string confirmPassword)
+        public async Task<IActionResult> Register(string username, string password, string email, string confirmPassword)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(confirmPassword))
             {
@@ -26,7 +26,7 @@ namespace Web.Controllers
                 Password = password,
                 ConfirmPassword = confirmPassword
             };
-            APIClient.PostRequest("api/User/register", regReq);
+            await APIClient.PostAsync<object, dynamic>("api/User/register", regReq);
             return Redirect("/Login");
         }
 
@@ -46,17 +46,14 @@ namespace Web.Controllers
                     Password = password
                 };
 
+                var response = await APIClient.PostAsync<object, LoginResponse>("api/User/login", loginRequest);
 
-                var response = APIClient.PostRequest("api/User/login", loginRequest);
-
-                var loginResponse = JsonConvert.DeserializeObject<LoginResponse>(response);
-
-                if (loginResponse?.User == null)
+                if (response?.User == null)
                 {
                     throw new Exception("Неверный ответ от сервера: информация о пользователе не получена");
                 }
 
-                string temporaryToken = loginResponse.User.Id.ToString();
+                string temporaryToken = response.User.Id.ToString();
 
                 Response.Cookies.Append("AuthToken", temporaryToken, new CookieOptions
                 {
@@ -66,17 +63,17 @@ namespace Web.Controllers
                     Expires = DateTimeOffset.Now.AddDays(7)
                 });
 
-                Response.Cookies.Append("UserEmail", loginResponse.User.Email, new CookieOptions
+                Response.Cookies.Append("UserEmail", response.User.Email, new CookieOptions
                 {
                     Expires = DateTimeOffset.Now.AddDays(7)
                 });
 
-                Response.Cookies.Append("UserId", loginResponse.User.Id.ToString(), new CookieOptions
+                Response.Cookies.Append("UserId", response.User.Id.ToString(), new CookieOptions
                 {
                     Expires = DateTimeOffset.Now.AddDays(7)
                 });
 
-                Response.Cookies.Append("Username", loginResponse.User.Username.ToString(), new CookieOptions
+                Response.Cookies.Append("Username", response.User.Username.ToString(), new CookieOptions
                 {
                     Expires = DateTimeOffset.Now.AddDays(7)
                 });
@@ -97,7 +94,7 @@ namespace Web.Controllers
             Response.Cookies.Delete("UserId");
             Response.Cookies.Delete("Username");
 
-            APIClient.Client = null;
+            APIClient.CurrentUser = null;
 
             return Redirect("/Login");
         }
