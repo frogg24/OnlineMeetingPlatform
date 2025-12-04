@@ -21,5 +21,7 @@ namespace Database
             AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
         }
         public virtual DbSet<User> Users { set; get; }
+        public virtual DbSet<Meeting> Meetings { set; get; }
+        public virtual DbSet<MeetingUser> MeetingUsers { set; get; }
     }
 }

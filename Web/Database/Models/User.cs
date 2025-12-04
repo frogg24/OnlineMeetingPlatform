@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,9 @@ namespace Database.Models
         public string PasswordHash { get; private set; }
         [Required]
         public string Email { get; private set; }
+
+        [ForeignKey("UserId")]
+        public virtual List<MeetingUser> MeetingUser { get; set; } = new();
         public static User? Create(UserViewModel user)
         {
             if (user == null)

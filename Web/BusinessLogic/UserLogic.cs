@@ -8,18 +8,18 @@ namespace BusinessLogic
 {
     public class UserLogic: IUserService
     {   
-        private readonly IUserStorage _UserStorage;
+        private readonly IUserStorage _userStorage;
 
         public UserLogic(IUserStorage UserStorage)
         {
-            _UserStorage = UserStorage;
+            _userStorage = UserStorage;
         }
 
         public async Task<List<UserViewModel>?> ReadList(UserSearchModel? model)
         {
             var list = model == null
-                ? await _UserStorage.GetFullList()
-                : await _UserStorage.GetFilteredList(model);
+                ? await _userStorage.GetFullList()
+                : await _userStorage.GetFilteredList(model);
 
             if (list == null)
             {
@@ -36,7 +36,7 @@ namespace BusinessLogic
                 throw new ArgumentNullException(nameof(model));
             }
 
-            var element = await _UserStorage.GetElement(model);
+            var element = await _userStorage.GetElement(model);
 
             if (element == null)
             {
@@ -48,34 +48,22 @@ namespace BusinessLogic
 
         public async Task<bool> Create(UserViewModel model)
         {
-            CheckModel(model);
-            var result = await _UserStorage.Insert(model);
-
-            if (result == null)
-            {
-                return false;
-            }
-
-            return true;
+            await CheckModelAsync(model);
+            var result = await _userStorage.Insert(model);
+            return result != null;
         }
 
         public async Task<bool> Update(UserViewModel model)
         {
-            CheckModel(model);
-            var result = await _UserStorage.Update(model);
-
-            if (result == null)
-            {
-                return false;
-            }
-
-            return true;
+            await CheckModelAsync(model);
+            var result = await _userStorage.Update(model);
+            return result != null;
         }
 
         public async Task<bool> Delete(UserViewModel model)
         {
-            CheckModel(model, false);
-            var result = await _UserStorage.Delete(model);
+            await CheckModelAsync(model, false);
+            var result = await _userStorage.Delete(model);
 
             if (result == null)
             {
@@ -85,7 +73,7 @@ namespace BusinessLogic
             return true;
         }
 
-        private void CheckModel(UserViewModel model, bool withParams = true)
+        private async Task CheckModelAsync(UserViewModel model, bool withParams = true)
         {
             if (model == null)
             {
@@ -103,23 +91,19 @@ namespace BusinessLogic
             }
             if (string.IsNullOrWhiteSpace(model.Email))
             {
-                throw new ArgumentException("Почта не может быть пустым", nameof(model.Email));
+                throw new ArgumentException("Почта не может быть пустой", nameof(model.Email));
             }
             if (string.IsNullOrWhiteSpace(model.PasswordHash))
             {
                 throw new ArgumentException("Пароль не может быть пустым", nameof(model.PasswordHash));
             }
 
-            var existingUser = _UserStorage.GetElement(new UserSearchModel
-            {
-                Email = model.Email,
-            }).Result;
+            var existingUser = await _userStorage.GetElement(new UserSearchModel { Email = model.Email });
 
             if (existingUser != null && existingUser.Id != model.Id &&
                 string.Equals(existingUser.Email, model.Email, StringComparison.OrdinalIgnoreCase))
             {
-                throw new InvalidOperationException($"Пользователь с почтой '{model.Email}' уже существует"
-                );
+                throw new InvalidOperationException($"Пользователь с почтой '{model.Email}' уже существует");
             }
         }
     }

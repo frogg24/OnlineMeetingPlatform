@@ -33,13 +33,11 @@ namespace Database.Implements
             }
             if (!string.IsNullOrEmpty(model.Username))
             {
-                var usernameLower = model.Username.ToLower();
-                query = query.Where(x => x.Username.ToLower().Contains(usernameLower));
+                query = query.Where(x => x.Username.Equals(model.Username));
             }
             if (!string.IsNullOrEmpty(model.Email))
             {
-                var emailLower = model.Email.ToLower();
-                query = query.Where(x => x.Email.ToLower().Contains(emailLower));
+                query = query.Where(x => x.Email.Equals(model.Email));
             }
             if (!string.IsNullOrEmpty(model.PasswordHash))
             {
@@ -68,16 +66,8 @@ namespace Database.Implements
 
             if (!string.IsNullOrEmpty(model.Email))
             {
-                try
-                {
-                    var tec = await context.Users.FirstOrDefaultAsync(x => x.Email.Equals(model.Email));
-                    return tec?.GetViewModel;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Ошибка в GetElement (FirstOrDefaultAsync): {ex}");
-                    throw;
-                }
+                var tec = await context.Users.FirstOrDefaultAsync(x => x.Email.Equals(model.Email));
+                return tec?.GetViewModel;
             }
             return null;
         }
