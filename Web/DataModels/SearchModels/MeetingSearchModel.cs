@@ -14,6 +14,5 @@ namespace DataModels.SearchModels
         public string? Link { get; set; } = string.Empty;
         public DateTime? Date { get; set; }
         public int? ManagerId { get; set; }
-        public string? ManagerUsername { get; set; } = string.Empty;
     }
 }

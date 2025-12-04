@@ -8,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddTransient<IUserService, UserLogic>();
 builder.Services.AddTransient<IUserStorage, UserStorage>();
+builder.Services.AddTransient<IMeetingService, MeetingLogic>();
+builder.Services.AddTransient<IMeetingStorage, MeetingStorage>();
+builder.Services.AddTransient<IMeetingUserService, MeetingUserLogic>();
+builder.Services.AddTransient<IMeetingUserStorage, MeetingUserStorage>();
 
 // Add services to the container.
 

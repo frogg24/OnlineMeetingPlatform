@@ -68,7 +68,7 @@ namespace Database.Models
             Description = Description,
             Link = Link,
             Date = Date,
-            ManagerId = Manager.Id,
+            ManagerId = ManagerId,
         };
     }
 }
