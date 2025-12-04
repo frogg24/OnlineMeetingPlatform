@@ -78,7 +78,7 @@
                     @if (true) // Запрос на мероприятия участника
                     {
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>Название мероприятия</th>
@@ -145,7 +145,7 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <a href="/Events/Create" class="btn btn-success">
+                        <a href="/CreateMeeting" class="btn btn-success">
                             <i data-feather="plus" class="me-1"></i>
                             Создать мероприятие
                         </a>
@@ -154,7 +154,7 @@
                     @if (true) // Запрос на мероприятия пользователя
                     {
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>Название мероприятия</th>
@@ -189,10 +189,10 @@
                                         <td>45</td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="/Events/Edit/2" class="btn btn-outline-primary btn-sm">
+                                                <a href="/EditMeeting/2" class="btn btn-outline-primary btn-sm">
                                                     <i data-feather="edit" width="14" height="14"></i>
                                                 </a>
-                                                <a href="/Events/View/2" class="btn btn-outline-info btn-sm">
+                                                <a href="/ViewMeeting/2" class="btn btn-outline-info btn-sm">
                                                     <i data-feather="eye" width="14" height="14"></i>
                                                 </a>
                                                 <button class="btn btn-outline-danger btn-sm" onclick="deleteEvent(2)">

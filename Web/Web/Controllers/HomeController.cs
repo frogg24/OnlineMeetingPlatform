@@ -1,6 +1,7 @@
 ﻿using DataModels.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Web.Models;
 
 namespace Web.Controllers
 {
@@ -100,18 +101,5 @@ namespace Web.Controllers
 
             return Redirect("/Login");
         }
-    }
-
-    public class LoginResponse
-    {
-        public string Message { get; set; }
-        public UserData User { get; set; }
-    }
-
-    public class UserData
-    {
-        public int Id { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
     }
 }
