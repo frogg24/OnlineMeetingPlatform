@@ -1,4 +1,5 @@
-﻿@page
+﻿@page "{id:int?}"
+@model Web.Pages.EditMeetingModel
 @{
     ViewData["Title"] = "Редактировать мероприятие";
 }
@@ -18,6 +19,14 @@
     }
     <main class="main-content">
         <div class="container">
+            @if (!string.IsNullOrEmpty(Model.StatusMessage))
+            {
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    @Model.StatusMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     <div class="card">
@@ -28,35 +37,66 @@
                             </h3>
                         </div>
                         <div class="card-body">
-                            <form id="editEventForm">
-                                <input type="hidden" id="eventId" />
-                                <div class="mb-3">
-                                    <label for="titleInput" class="form-label">Название мероприятия</label>
-                                    <input type="text" class="form-control" id="titleInput" name="title" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="descriptionInput" class="form-label">Описание</label>
-                                    <textarea class="form-control" id="descriptionInput" name="description" rows="4" required></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="linkInput" class="form-label">Ссылка на мероприятие</label>
-                                    <input type="url" class="form-control" id="linkInput" name="link" required>
-                                    <div class="form-text">Укажите ссылку на Zoom, Teams, YouTube и т.д.</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label for="dateInput" class="form-label">Дата и время</label>
-                                        <input type="datetime-local" class="form-control" id="dateInput" name="date" required>
+                            @if (Model.Meeting != null && Model.Meeting.Id > 0)
+                            {
+                                <form method="post">
+                                    @Html.AntiForgeryToken()
+
+                                    <!-- Скрытое поле с ID -->
+                                    <input type="hidden" name="Id" value="@Model.Meeting?.Id" />
+
+                                    <div class="mb-3">
+                                        <label asp-for="Meeting.Title" class="form-label">Название мероприятия</label>
+                                        <input name="Title" class="form-control"
+                                               value="@Model.Meeting?.Title" required>
+                                        <span asp-validation-for="Meeting.Title" class="text-danger"></span>
                                     </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="Meeting.Description" class="form-label">Описание</label>
+                                        <textarea name="Description" class="form-control" rows="4" required>@Model.Meeting?.Description</textarea>
+                                        <span asp-validation-for="Meeting.Description" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="Meeting.Link" class="form-label">Ссылка на мероприятие</label>
+                                        <input name="Link" type="text" class="form-control"
+                                               value="@Model.Meeting?.Link" required>
+                                        <div class="form-text">Укажите ссылку на Zoom, Teams, и т.д.</div>
+                                        <span asp-validation-for="Meeting.Link" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label asp-for="Meeting.Date" class="form-label">Дата и время</label>
+                                            @{
+                                                var dateValue = Model.Meeting?.Date.ToString("yyyy-MM-ddTHH:mm") ?? DateTime.Now.AddDays(1).ToString("yyyy-MM-ddTHH:mm");
+                                            }
+                                            <input name="Date" type="datetime-local" class="form-control"
+                                                   value="@dateValue" required>
+                                            <span asp-validation-for="Meeting.Date" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4">
+                                        <button type="submit" class="btn btn-warning">
+                                            <i data-feather="save" class="me-1"></i>
+                                            Сохранить изменения
+                                        </button>
+                                        <a href="/Account" class="btn btn-outline-secondary">Отмена</a>
+                                    </div>
+                                </form>
+
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger">
+                                    Не удалось загрузить данные мероприятия.
                                 </div>
-                                <div class="mt-4">
-                                    <button type="submit" class="btn btn-warning">
-                                        <i data-feather="save" class="me-1"></i>
-                                        Сохранить изменения
-                                    </button>
-                                    <a href="/Account" class="btn btn-outline-secondary">Отмена</a>
+                                <div>
+                                    <a href="/Account" class="btn btn-primary">Вернуться в аккаунт</a>
                                 </div>
-                            </form>
+                            }
                         </div>
                     </div>
                 </div>
@@ -64,87 +104,7 @@
         </div>
     </main>
     <script>
-        // Инициализация Feather Icons
         feather.replace();
-
-        // Функция для получения ID мероприятия из URL (например, /EditEvent/1)
-        function getEventIdFromUrl() {
-            const path = window.location.pathname;
-            const id = path.split('/').pop();
-            return parseInt(id, 10);
-        }
-
-        // Загрузка данных мероприятия
-        async function loadEventDetails(eventId) {
-            try {
-                const response = await fetch(`/api/meeting/${eventId}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    document.getElementById('eventId').value = data.id;
-                    document.getElementById('titleInput').value = data.title;
-                    document.getElementById('descriptionInput').value = data.description;
-                    document.getElementById('linkInput').value = data.link;
-
-                    // Преобразуем дату в нужный формат для input[type="datetime-local"]
-                    const localDate = new Date(data.date).toISOString().slice(0, 16);
-                    document.getElementById('dateInput').value = localDate;
-                } else {
-                    alert('Мероприятие не найдено.');
-                    window.location.href = '/Account';
-                }
-            } catch (error) {
-                console.error('Ошибка при загрузке данных:', error);
-                alert('Произошла ошибка при загрузке данных.');
-            }
-        }
-
-        // Обработка формы редактирования
-        document.getElementById('editEventForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const eventId = document.getElementById('eventId').value;
-            const formData = {
-                id: parseInt(eventId),
-                title: document.getElementById('titleInput').value,
-                description: document.getElementById('descriptionInput').value,
-                link: document.getElementById('linkInput').value,
-                date: new Date(document.getElementById('dateInput').value).toISOString(),
-                managerId: 1 // Заглушка
-            };
-
-            try {
-                const response = await fetch('/api/meeting/update', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        // 'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                if (response.ok) {
-                    alert('Мероприятие успешно обновлено!');
-                    window.location.href = '/Account';
-                } else {
-                    const errorData = await response.json();
-                    alert('Ошибка: ' + errorData.message || 'Не удалось обновить мероприятие.');
-                }
-            } catch (error) {
-                console.error('Ошибка при отправке запроса:', error);
-                alert('Произошла ошибка при подключении к серверу.');
-            }
-        });
-
-        // Загрузить данные при загрузке страницы
-        window.onload = function() {
-            const eventId = getEventIdFromUrl();
-            if (eventId) {
-                loadEventDetails(eventId);
-            } else {
-                alert('ID мероприятия не указан в URL.');
-                window.location.href = '/Account';
-            }
-        };
     </script>
 </body>
 </html>

@@ -14,8 +14,7 @@ namespace Web
         {
             _client.BaseAddress = new Uri(configuration["IPAddress"]);
             _client.DefaultRequestHeaders.Accept.Clear();
-            _client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         // Асинхронный GET запрос

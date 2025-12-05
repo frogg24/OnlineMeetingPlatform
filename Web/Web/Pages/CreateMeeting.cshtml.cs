@@ -27,8 +27,6 @@ namespace Web.Pages
                 foreach (var error in ModelState)
                 {
                     Console.WriteLine($"Key: '{error.Key}', Errors: [{string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))}]");
-                    // Вы также можете использовать System.Diagnostics.Debug.WriteLine(...) 
-                    // для вывода в окно Output Visual Studio.
                 }
             }
 

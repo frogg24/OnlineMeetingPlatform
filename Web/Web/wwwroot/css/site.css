@@ -684,3 +684,44 @@ body {
     background-color: var(--color-primary-light);
     color: var(--color-primary);
 }
+
+/* Добавьте в конец site.css */
+
+/* Feather Icons Fix */
+[data-feather] {
+    display: inline-block;
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+    color: currentColor;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Ensure visibility in dark theme */
+.btn-outline-primary [data-feather],
+.btn-outline-danger [data-feather],
+.btn-outline-info [data-feather] {
+    color: inherit;
+}
+
+/* Button group icons */
+.btn-group .btn [data-feather] {
+    width: 14px;
+    height: 14px;
+}
+
+/* Large icons */
+[data-feather][width="48"][height="48"] {
+    width: 48px;
+    height: 48px;
+}
+
+/* Make sure SVGs are visible */
+svg[data-feather] {
+    display: inline-block;
+    vertical-align: middle;
+}
