@@ -1,0 +1,138 @@
+﻿@page "{id:int?}"
+@model Web.Pages.ViewMeetingModel
+@{
+    ViewData["Title"] = "Просмотреть мероприятие";
+}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Платформа мероприятий</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+</head>
+<body>
+    @{
+        await Html.RenderPartialAsync("Header");
+    }
+    <main class="main-content">
+        <div class="container">
+            @if (!string.IsNullOrEmpty(Model.StatusMessage))
+            {
+                <div id="toast-container" class="toast-container"></div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        if (typeof toastManager !== 'undefined') {
+                            toastManager.warning('@Html.Raw(Model.StatusMessage)');
+                        }
+                    });
+                </script>
+            }
+
+            <div class="row justify-content-center">
+                <div class="col-lg-10 col-xl-8">
+                    @if (Model.Meeting != null && Model.Meeting.Id > 0)
+                    {
+                        <!-- Modern header section with back button and meeting title -->
+                        <div class="meeting-view-header">
+                            <a href="/Account" class="back-link">
+                                <i data-feather="arrow-left"></i>
+                                <span>Назад к списку</span>
+                            </a>
+                            <h1 class="meeting-view-title">@Model.Meeting.Title</h1>
+                            <p class="meeting-view-id">
+                                <i data-feather="hash"></i>
+                                ID: @Model.Meeting.Id
+                            </p>
+                        </div>
+
+                        <!-- Modern card layout with info sections -->
+                        <div class="meeting-details-card">
+                            <!-- Description Section -->
+                            <div class="detail-section">
+                                <div class="detail-label">
+                                    <i data-feather="file-text"></i>
+                                    <span>Описание</span>
+                                </div>
+                                <div class="detail-content">
+                                    @Model.Meeting.Description
+                                </div>
+                            </div>
+
+                            <!-- Date and Time Section -->
+                            <div class="detail-section">
+                                <div class="detail-label">
+                                    <i data-feather="calendar"></i>
+                                    <span>Дата и время</span>
+                                </div>
+                                <div class="detail-content highlight-text">
+                                    @Model.Meeting.Date.ToLocalTime().ToString("dd MMMM yyyy, HH:mm")
+                                </div>
+                            </div>
+
+                            <!-- Meeting Link Section -->
+                            <div class="detail-section">
+                                <div class="detail-label">
+                                    <i data-feather="link"></i>
+                                    <span>Ссылка на мероприятие</span>
+                                </div>
+                                <div class="meeting-link-wrapper">
+                                    <div class="meeting-link-display">
+                                        <input type="text" class="link-input" value="@Model.Meeting.Link" readonly onclick="this.select()">
+                                        <button class="copy-link-btn" onclick="copyToClipboard('@Model.Meeting.Link')">
+                                            <i data-feather="copy"></i>
+                                        </button>
+                                    </div>
+                                    <a href="@Model.Meeting.Link" target="_blank" class="btn btn-primary btn-join-meeting">
+                                        <i data-feather="external-link"></i>
+                                        Перейти к мероприятию
+                                    </a>
+                                </div>
+                                <p class="detail-hint">Поддерживаются Zoom, Teams, Google Meet и другие платформы</p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Modern error state -->
+                        <div class="error-state-card">
+                            <div class="error-icon">
+                                <i data-feather="alert-circle"></i>
+                            </div>
+                            <h3>Мероприятие не найдено</h3>
+                            <p>Не удалось загрузить данные мероприятия. Возможно, оно было удалено или у вас нет доступа.</p>
+                            <a href="/Account" class="btn btn-primary">
+                                <i data-feather="home"></i>
+                                Вернуться в аккаунт
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Added copy to clipboard functionality -->
+    <script>
+        feather.replace();
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                if (typeof toastManager !== 'undefined') {
+                    toastManager.success('Ссылка скопирована в буфер обмена!');
+                } else {
+                    alert('Ссылка скопирована!');
+                }
+            }, function(err) {
+                if (typeof toastManager !== 'undefined') {
+                    toastManager.error('Не удалось скопировать ссылку');
+                } else {
+                    alert('Ошибка копирования');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
