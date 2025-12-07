@@ -26,14 +26,18 @@ namespace Database.Models
         {
             if (model == null) return null;
 
+            var meeting = context.Meetings.FirstOrDefault(d => d.Id == model.MeetingId);
+            var user = context.Users.FirstOrDefault(d => d.Id == model.UserId);
+
             return new MeetingUser()
             {
                 Id = model.Id,
                 MeetingId = model.MeetingId,
                 UserId = model.UserId,
 
-                Meeting = context.Meetings.FirstOrDefault(d => d.Id == model.MeetingId),
-                User = context.Users.FirstOrDefault(d => d.Id == model.UserId),
+                Meeting = meeting,
+                User = user,
+                
             };
         }
 
@@ -41,17 +45,22 @@ namespace Database.Models
         {
             if (model == null) return;
 
+            var meeting = context.Meetings.FirstOrDefault(d => d.Id == model.MeetingId);
+            var user = context.Users.FirstOrDefault(d => d.Id == model.UserId);
+
             MeetingId = model.MeetingId;
             UserId = model.UserId;
-            Meeting = context.Meetings.FirstOrDefault(d => d.Id == model.MeetingId);
-            User = context.Users.FirstOrDefault(d => d.Id == model.UserId);
+            Meeting = meeting;
+            User = user;
         }
 
         public MeetingUserViewModel GetViewModel => new()
         {
             Id = Id,
             MeetingId = MeetingId,
-            UserId = UserId
+            UserId = UserId,
+            Username = User?.Username,
+            Email = User?.Email,
         };
     }
 }

@@ -59,7 +59,7 @@
                                         </p>
                                         <p class="card-text flex-grow-1">@(meeting.Description.Length > 100 ? meeting.Description.Substring(0, 100) + "..." : meeting.Description)</p>
                                         <div class="mt-auto">
-                                            <a href="/Meeting/Details/@meeting.Id" class="btn btn-outline-primary">Подробнее</a>
+                                            <a href="/ViewMeeting/@meeting.Id" class="btn btn-outline-primary">Подробнее</a>
                                         </div>
                                     </div>
                                 </div>
@@ -80,10 +80,7 @@
     </main>
 
     <script>
-        // Инициализация Feather Icons
-        if (typeof feather !== 'undefined') {
-            feather.replace();
-        }
+        feather.replace();
     </script>
 </body>
 </html>

@@ -178,5 +178,43 @@ namespace API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> RemoveUserByUserAndMeeting([FromQuery] int userId, [FromQuery] int meetingId)
+        {
+            try
+            {
+                if (userId <= 0 || meetingId <= 0)
+                {
+                    return BadRequest(new { message = "UserId и MeetingId должны быть положительными числами" });
+                }
+
+                var searchModel = new MeetingUserSearchModel
+                {
+                    UserId = userId,
+                    MeetingId = meetingId
+                };
+
+                var participant = await _meetingUserService.ReadElement(searchModel);
+
+                if (participant == null)
+                {
+                    return BadRequest(new { message = "Пользователь не найден в участниках этого мероприятия" });
+                }
+
+                // Удаляем найденную запись по её Id
+                var result = await _meetingUserService.Delete(participant);
+                if (result)
+                {
+                    return Ok(new { message = "Пользователь удален из мероприятия" });
+                }
+
+                return BadRequest(new { message = "Ошибка при удалении пользователя из мероприятия" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }
