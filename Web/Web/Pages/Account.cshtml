@@ -101,7 +101,7 @@
                                         <th>Название мероприятия</th>
                                         <th>Дата</th>
                                         <th>Ссылка</th>
-                                        <th>Действия</th>
+                                        <th>Подробности</th> 
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -124,16 +124,11 @@
                                                 }
                                             </td>
                                             <td>
-                                                @if (participation != null)
-                                                {
-                                                    <button class="btn btn-outline-danger btn-sm" onclick="leaveEvent(@participation.Id, '@meeting.Title')">
-                                                        <!-- SVG иконка X (крестик) -->
-                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                                                        </svg> Отказаться
-                                                    </button>
-                                                }
+                                                <!-- Новая колонка с кнопкой -->
+                                                <a href="/ViewMeeting/@meeting.Id" class="btn btn-outline-info btn-sm">
+                                                    <!-- SVG иконка глаза -->
+                                                    Подробности
+                                                </a>
                                             </td>
                                         </tr>
                                     }
