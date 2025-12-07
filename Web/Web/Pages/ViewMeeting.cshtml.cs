@@ -23,6 +23,8 @@ namespace Web.Pages
 
         [FromRoute]
         public int Id { get; set; }
+        public bool isManager { get; set; }
+        public bool isParticipant { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -40,9 +42,27 @@ namespace Web.Pages
                 // Устанавливаем данные для отображения
                 Meeting = meetingsList[0];
 
+                var userIdCookie = Request.Cookies["UserId"];
+                if (int.TryParse(userIdCookie, out int userId))
+                {
+                    isManager = Meeting.ManagerId == userId;
+                }
+                else
+                {
+                    isManager = false;
+                }
+
                 // Получаем список участников мероприятия
                 MeetingParticipants = await APIClient.GetAsync<List<MeetingUserViewModel>>($"api/meeting/getlistusers?MeetingId={Id}") ?? new List<MeetingUserViewModel>();
                 ParticipantCount = MeetingParticipants.Count;
+                foreach ( var meeting in MeetingParticipants)
+                {
+                    if (meeting.UserId == userId)
+                    {
+                        isParticipant = true;
+                        break;
+                    }
+                }
 
                 return Page();
             }
@@ -57,7 +77,7 @@ namespace Web.Pages
         {
             try
             {
-                var deleteResponse = await APIClient.DeleteAsync($"api/meetinguser/RemoveUserByUserAndMeeting?userId={ParticipantId}&meetingId={MeetingId}");
+                var deleteResponse = await APIClient.DeleteAsync($"api/Meeting/RemoveUserByUserAndMeeting?userId={ParticipantId}&meetingId={MeetingId}");
 
                 if (deleteResponse)
                 {
@@ -73,7 +93,80 @@ namespace Web.Pages
                 StatusMessage = $"Ошибка при удалении участника: {ex.Message}";
             }
 
-            return RedirectToPage(new { id = Meeting.Id });
+            return RedirectToPage(new { id = MeetingId });
+        }
+
+        public async Task<IActionResult> OnPostJoinMeetingAsync()
+        {
+            try
+            {
+                MeetingUserViewModel addmodel = new MeetingUserViewModel()
+                {
+                    MeetingId = MeetingId,
+                };
+
+                var userIdCookie = Request.Cookies["UserId"];
+                try
+                {
+                    addmodel.UserId = int.Parse(userIdCookie);
+                }
+                catch
+                {
+                    return RedirectToPage(new { id = MeetingId });
+                }
+
+                var addResponse = await APIClient.PostAsync<MeetingUserViewModel, dynamic>("api/meeting/AddUser", addmodel);
+
+                if (addResponse)
+                {
+                    StatusMessage = "Участник успешно удален из мероприятия";
+                }
+                else
+                {
+                    StatusMessage = "Ошибка при удалении участника";
+                }
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Ошибка при добавлении участника: {ex.Message}";
+            }
+
+            return RedirectToPage(new { id = MeetingId });
+        }
+
+        public async Task<IActionResult> OnPostRefuseMeetingAsync()
+        {
+            try
+            {
+
+                var userIdCookie = Request.Cookies["UserId"];
+                int userid;
+                try
+                {
+                    userid = int.Parse(userIdCookie);
+                }
+                catch
+                {
+                    return RedirectToPage(new { id = MeetingId });
+                }
+
+                var deleteResponse = await APIClient.DeleteAsync($"api/Meeting/RemoveUserByUserAndMeeting?userId={userid}&meetingId={MeetingId}");
+
+                if (deleteResponse)
+                {
+                    StatusMessage = "Участник успешно удален из мероприятия";
+                }
+                else
+                {
+                    StatusMessage = "Ошибка при удалении участника";
+                }
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Ошибка при удалении участника: {ex.Message}";
+            }
+
+            return RedirectToPage(new { id = MeetingId });
         }
     }
 }
