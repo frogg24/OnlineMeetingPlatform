@@ -11,6 +11,7 @@ namespace Web.Pages
         public List<MeetingViewModel> UserMeetings { get; set; } = new();
         public List<MeetingViewModel> ParticipantMeetings { get; set; } = new();
         public List<MeetingUserViewModel> UserMeetingParticipations { get; set; } = new();
+        public bool UserIsNotificationOn { get; set; }
 
         [TempData]
         public string StatusMessage { get; set; }
@@ -18,11 +19,14 @@ namespace Web.Pages
         public async Task OnGet()
         {
             var userIdCookie = Request.Cookies["UserId"];
+            UserIsNotificationOn = Convert.ToBoolean(Request.Cookies["isNotificationOn"]);
 
             if (int.TryParse(userIdCookie, out int userId))
             {
                 try
                 {
+                    //TODO: оптимизировать этот ужас
+
                     // ѕолучаем меропри€ти€, где пользователь €вл€етс€ организатором
                     var userMeetingsUrl = $"api/meeting/getlist?managerId={userId}";
                     UserMeetings = await APIClient.GetAsync<List<MeetingViewModel>>(userMeetingsUrl) ?? new List<MeetingViewModel>();

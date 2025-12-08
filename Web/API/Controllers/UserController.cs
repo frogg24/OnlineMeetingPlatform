@@ -82,7 +82,7 @@ namespace API.Controllers
                 return Ok(new
                 {
                     message = "Вход выполнен успешно",
-                    user = new { user.Id, user.Username, user.Email }
+                    user = new { user.Id, user.Username, user.Email, user.isNotificationOn }
                 });
             }
             catch (System.Exception ex)
@@ -131,7 +131,8 @@ namespace API.Controllers
                 {
                     user.Id,
                     user.Username,
-                    user.Email
+                    user.Email,
+                    user.isNotificationOn
                 };
 
                 return Ok(safeUser);
@@ -159,6 +160,11 @@ namespace API.Controllers
                 // Обновляем данные
                 existingUser.Username = request.Username ?? existingUser.Username;
                 existingUser.Email = request.Email ?? existingUser.Email;
+                if (request.isNotificationOn.HasValue)
+                {
+                    existingUser.isNotificationOn = request.isNotificationOn.Value;
+                }
+
 
                 // Если пришел новый пароль - хешируем его
                 if (!string.IsNullOrEmpty(request.NewPassword))
@@ -263,5 +269,7 @@ namespace API.Controllers
         public string? Email { get; set; }
         public string? CurrentPassword { get; set; }
         public string? NewPassword { get; set; }
+        public bool? isNotificationOn { get; set; }
+
     }
 }

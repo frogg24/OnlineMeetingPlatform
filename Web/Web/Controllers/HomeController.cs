@@ -79,6 +79,11 @@ namespace Web.Controllers
                     Expires = DateTimeOffset.Now.AddDays(7)
                 });
 
+                Response.Cookies.Append("isNotificationOn", response.User.isNotificationOn.ToString(), new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddDays(7)
+                });
+
                 return Redirect("/Index");
             }
             catch (Exception ex)
@@ -94,6 +99,7 @@ namespace Web.Controllers
             Response.Cookies.Delete("UserEmail");
             Response.Cookies.Delete("UserId");
             Response.Cookies.Delete("Username");
+            Response.Cookies.Delete("isNotificationOn");
 
             APIClient.CurrentUser = null;
 

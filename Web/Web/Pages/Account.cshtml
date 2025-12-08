@@ -62,9 +62,9 @@
                     <div class="col-md-4 text-md-end">
                         <div class="notification-widget d-inline-flex align-items-center gap-2 p-2 rounded-pill bg-opacity-15 border border-white border-opacity-25">
                             <div class="form-check form-switch mb-0">
-                                <input class="form-check-input" type="checkbox" id="notificationToggle" checked>
+                                <input class="form-check-input" type="checkbox" id="notificationToggle"
+                                       @(Model.UserIsNotificationOn ? "checked" : "")> <!-- Вот это изменение -->
                                 <label class="form-check-label small fw-medium" for="notificationToggle">
-                                    <!-- SVG иконка колокольчика -->
                                     <svg class="feather-icon me-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                                         <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
@@ -293,85 +293,5 @@
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Убрана инициализация Feather Icons
-        // document.addEventListener('DOMContentLoaded', function() { ... });
-
-        // Переключение уведомлений
-        document.getElementById('notificationToggle').addEventListener('change', function() {
-            const isChecked = this.checked;
-            // Здесь можно добавить AJAX-запрос для сохранения предпочтений
-            console.log('Уведомления:', isChecked ? 'включены' : 'выключены');
-        });
-
-        let currentEventId = null;
-        let actionType = '';
-
-        // Функция для отказа от участия в мероприятии
-        function leaveEvent(meetingUserId, eventTitle) {
-            currentEventId = meetingUserId;
-            actionType = 'leave';
-            document.getElementById('modalMessage').textContent =
-                `Вы уверены, что хотите отказаться от участия в мероприятии "${eventTitle}"?`;
-            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
-            modal.show();
-        }
-
-        // Функция для удаления мероприятия
-        function deleteEvent(eventId, eventTitle) {
-            currentEventId = eventId;
-            actionType = 'delete';
-            document.getElementById('modalMessage').textContent =
-                `Вы уверены, что хотите удалить мероприятие "${eventTitle}"? Это действие необратимо.`;
-            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
-            modal.show();
-        }
-
-        // Обработчик подтверждения действия
-        document.getElementById('confirmAction').addEventListener('click', async function() {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
-
-            try {
-                let url = '';
-                let method = 'DELETE';
-                let successMessage = '';
-
-                if (actionType === 'leave') {
-                    // Отказ от участия - используем MeetingUser Id
-                    url = `/api/meeting/removeuser/${currentEventId}`;
-                    successMessage = 'Вы отказались от участия в мероприятии';
-                } else if (actionType === 'delete') {
-                    // Удаление мероприятия
-                    url = `/api/meeting/delete/${currentEventId}`;
-                    successMessage = 'Мероприятие успешно удалено';
-                }
-
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    alert(result.message || successMessage);
-                    location.reload();
-                } else {
-                    const error = await response.text();
-                    alert(`Ошибка: ${error}`);
-                }
-            } catch (error) {
-                console.error('Ошибка:', error);
-                alert('Произошла ошибка при выполнении операции');
-            } finally {
-                modal.hide();
-                currentEventId = null;
-                actionType = '';
-            }
-        });
-    </script>
 </body>
 </html>
