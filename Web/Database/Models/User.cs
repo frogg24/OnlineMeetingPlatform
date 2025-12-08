@@ -49,7 +49,7 @@ namespace Database.Models
             Username = user.Username;
             Email = user.Email;
             PasswordHash = user.PasswordHash;
-            isNotificationOn = !user.isNotificationOn;
+            isNotificationOn = user.isNotificationOn;
         }
 
         public UserViewModel GetViewModel => new()

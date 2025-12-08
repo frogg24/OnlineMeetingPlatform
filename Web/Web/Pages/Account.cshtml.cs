@@ -1,8 +1,10 @@
+using DataModels.Models;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using DataModels.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Web.Models;
 
 namespace Web.Pages
 {
@@ -64,6 +66,37 @@ namespace Web.Pages
             {
                 StatusMessage = "Пользователь не авторизован. Пожалуйста, войдите в систему.";
             }
+        }
+
+        public async Task<IActionResult> OnPostChangeNotificationAsync()
+        {
+            try
+            {
+                var userIdCookie = Request.Cookies["UserId"];
+                int userid = Convert.ToInt32(userIdCookie);
+
+                var user = await APIClient.GetAsync<UserViewModel>($"api/User/users/{userid}");
+                user.isNotificationOn = !user.isNotificationOn;
+
+                UpdateUserRequest updUser = new UpdateUserRequest()
+                {
+                    isNotificationOn = user.isNotificationOn,
+                };
+
+                var response = await APIClient.PutAsync<UpdateUserRequest, dynamic>($"api/user/users/{userid}", updUser);
+
+                Response.Cookies.Append("isNotificationOn", user.isNotificationOn.ToString(), new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddDays(7)
+                });
+
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Ошибка: {ex.Message}";
+                return Page();
+            }
+            return RedirectToPage();
         }
     }
 }
