@@ -16,5 +16,7 @@ namespace DataModels.Models
         public string Email { get; set; }
         [Required]
         public string PasswordHash { get; set; }
+        [Required]
+        public bool isNotificationOn { get; set; }
     }
 }

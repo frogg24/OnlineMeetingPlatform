@@ -20,7 +20,6 @@ namespace Database.Implements
             return await context.Users.Select(x => x.GetViewModel).ToListAsync();
         }
 
-        //Будет использоваться для подгрузки участников мероприятия
         public async Task<List<UserViewModel>> GetFilteredList(UserSearchModel model)
         {
             using var context = new Database();

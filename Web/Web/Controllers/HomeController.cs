@@ -8,7 +8,7 @@ namespace Web.Controllers
     public class HomeController : Controller
     {
         [HttpPost]
-        public async Task<IActionResult> Register(string username, string password, string email, string confirmPassword)
+        public async Task<IActionResult> Register(string username, string password, string email, string confirmPassword, bool isNotificationOn)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(confirmPassword))
             {
@@ -24,7 +24,8 @@ namespace Web.Controllers
                 Username = username,
                 Email = email,
                 Password = password,
-                ConfirmPassword = confirmPassword
+                ConfirmPassword = confirmPassword,
+                isNotificationOn = isNotificationOn
             };
             await APIClient.PostAsync<object, dynamic>("api/User/register", regReq);
             return Redirect("/Login");

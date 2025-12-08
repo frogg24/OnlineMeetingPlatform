@@ -34,7 +34,8 @@ namespace API.Controllers
                 {
                     Username = request.Username,
                     Email = request.Email,
-                    PasswordHash = passwordHash
+                    PasswordHash = passwordHash,
+                    isNotificationOn = request.isNotificationOn
                 };
 
                 var result = await _userService.Create(userModel);

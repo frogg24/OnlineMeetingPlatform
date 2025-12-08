@@ -18,6 +18,8 @@ namespace Database.Models
         public string PasswordHash { get; private set; }
         [Required]
         public string Email { get; private set; }
+        [Required]
+        public bool isNotificationOn { get; private set; }
 
         [ForeignKey("UserId")]
         public virtual List<MeetingUser> MeetingUser { get; set; } = new();
@@ -33,6 +35,7 @@ namespace Database.Models
                 Username = user.Username,
                 Email = user.Email,
                 PasswordHash = user.PasswordHash,
+                isNotificationOn = user.isNotificationOn
             };
         }
 
@@ -46,6 +49,7 @@ namespace Database.Models
             Username = user.Username;
             Email = user.Email;
             PasswordHash = user.PasswordHash;
+            isNotificationOn = !user.isNotificationOn;
         }
 
         public UserViewModel GetViewModel => new()
@@ -54,6 +58,7 @@ namespace Database.Models
             Email = Email,
             Username = Username,
             PasswordHash = PasswordHash,
+            isNotificationOn = isNotificationOn
         };
     }
 }
