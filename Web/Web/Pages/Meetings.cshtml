@@ -3,16 +3,15 @@
 @{
     ViewData["Title"] = "Все мероприятия";
 }
-@using Microsoft.AspNetCore.Http
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация - Платформа мероприятий</title>
+    <title>@ViewData["Title"] - Платформа мероприятий</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 </head>
 
 <body>
@@ -21,6 +20,31 @@
     }
     <div class="container mt-4">
         <h1>Наши мероприятия</h1>
+
+        <form method="get" class="mb-4" onsubmit="return false;">
+            <div class="row">
+                <div class="col-12">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </span>
+                        <input type="text"
+                               name="SearchString"
+                               value="@Model.SearchString"
+                               class="form-control"
+                               placeholder="Поиск мероприятий..."
+                               onkeydown="if(event.key==='Enter'){ window.location.href='/Meetings?SearchString=' + encodeURIComponent(this.value); return false; }">
+                        @if (!string.IsNullOrEmpty(Model.SearchString))
+                        {
+                            <a class="btn btn-outline-secondary" href="/Meetings">Очистить</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </form>
 
         @if (Model.Meetings.Any())
         {
@@ -46,8 +70,16 @@
         else
         {
             <div class="alert alert-info">
-                <p>Нет доступных мероприятий.</p>
+                @if (!string.IsNullOrEmpty(Model.SearchString))
+                {
+                    <p>Мероприятий, соответствующих запросу "<strong>@Model.SearchString</strong>", не найдено.</p>
+                }
+                else
+                {
+                    <p>Нет доступных мероприятий.</p>
+                }
             </div>
         }
     </div>
 </body>
+</html>
