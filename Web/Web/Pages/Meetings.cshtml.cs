@@ -21,8 +21,10 @@ namespace Web.Pages
                     || m.Description.Contains(SearchString, StringComparison.OrdinalIgnoreCase)).ToList();
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"Error loading meetings: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
                 Meetings = new List<MeetingViewModel>();
             }
         }

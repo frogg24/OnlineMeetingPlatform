@@ -23,8 +23,10 @@ namespace Web.Pages
                         .ToList();
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"Error loading recent meetings: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
                 RecentMeetings = new List<MeetingViewModel>();
             }
         }

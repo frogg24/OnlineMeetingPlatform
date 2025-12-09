@@ -10,25 +10,33 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(string username, string password, string email, string confirmPassword, bool isNotificationOn)
         {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(confirmPassword))
+            try
             {
-                throw new Exception("Введите логин, пароль и почту");
-            }
-            if (!string.Equals(confirmPassword, password))
-            {
-                throw new Exception("Пароли не совпадают");
-            }
+                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(confirmPassword))
+                {
+                    throw new Exception("Введите логин, пароль и почту");
+                }
+                if (!string.Equals(confirmPassword, password))
+                {
+                    throw new Exception("Пароли не совпадают");
+                }
 
-            var regReq = new
+                var regReq = new
+                {
+                    Username = username,
+                    Email = email.ToLower(),
+                    Password = password,
+                    ConfirmPassword = confirmPassword,
+                    isNotificationOn = isNotificationOn
+                };
+                await APIClient.PostAsync<object, dynamic>("api/User/register", regReq);
+                return Redirect("/Login");
+            }
+            catch (Exception ex)
             {
-                Username = username,
-                Email = email.ToLower(),
-                Password = password,
-                ConfirmPassword = confirmPassword,
-                isNotificationOn = isNotificationOn
-            };
-            await APIClient.PostAsync<object, dynamic>("api/User/register", regReq);
-            return Redirect("/Login");
+                TempData["Error"] = $"Ошибка регистрации: {ex.Message}";
+                return Redirect("/Register");
+            }
         }
 
         [HttpPost]
@@ -38,7 +46,8 @@ namespace Web.Controllers
             {
                 if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
                 {
-                    throw new Exception("Введите логин и пароль");
+                    TempData["Error"] = "Введите email и пароль";
+                    return Redirect("/Login");
                 }
 
                 var loginRequest = new
@@ -51,7 +60,8 @@ namespace Web.Controllers
 
                 if (response?.User == null)
                 {
-                    throw new Exception("Неверный ответ от сервера: информация о пользователе не получена");
+                    TempData["Error"] = "Неверный email или пароль";
+                    return Redirect("/Login");
                 }
 
                 string temporaryToken = response.User.Id.ToString();
@@ -84,12 +94,12 @@ namespace Web.Controllers
                     Expires = DateTimeOffset.Now.AddDays(7)
                 });
 
-                return Redirect("/Index");
+                return Redirect("/Account");
             }
             catch (Exception ex)
             {
                 TempData["Error"] = "Ошибка входа: " + ex.Message;
-                return View();
+                return Redirect("/Login");
             }
         }
 
