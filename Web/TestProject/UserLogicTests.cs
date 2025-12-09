@@ -26,7 +26,6 @@ namespace TestProject
         [TestMethod]
         public async Task Create_ValidUser_CreatesSuccessfully()
         {
-            // Arrange
             var user = new UserViewModel
             {
                 Id = 1,
@@ -46,7 +45,6 @@ namespace TestProject
         [TestMethod]
         public async Task Create_UserWithExistingEmail_ThrowsException()
         {
-            // Arrange
             var existingUser = new UserViewModel
             {
                 Id = 1,
