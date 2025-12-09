@@ -61,6 +61,7 @@ namespace Database.Models
             UserId = UserId,
             Username = User?.Username,
             Email = User?.Email,
+            isNotificationOn = User?.isNotificationOn
         };
     }
 }

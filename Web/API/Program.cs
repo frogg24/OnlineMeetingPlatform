@@ -13,6 +13,9 @@ builder.Services.AddTransient<IMeetingStorage, MeetingStorage>();
 builder.Services.AddTransient<IMeetingUserService, MeetingUserLogic>();
 builder.Services.AddTransient<IMeetingUserStorage, MeetingUserStorage>();
 
+builder.Services.AddScoped<NotificationService>();
+builder.Services.AddHostedService<NotificationBackgroundService>();
+
 // Add services to the container.
 
 builder.Services.AddControllers();
