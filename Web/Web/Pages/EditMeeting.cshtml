@@ -70,7 +70,7 @@
                                         <div class="col-md-6">
                                             <label asp-for="Meeting.Date" class="form-label">Дата и время</label>
                                             @{
-                                                var dateValue = Model.Meeting?.Date.ToString("yyyy-MM-ddTHH:mm") ?? DateTime.Now.AddDays(1).ToString("yyyy-MM-ddTHH:mm");
+                                                var dateValue = Model.Meeting?.Date.ToLocalTime().ToString("yyyy-MM-ddTHH:mm") ?? DateTime.Now.AddDays(1).ToString("yyyy-MM-ddTHH:mm");
                                             }
                                             <input name="Date" type="datetime-local" class="form-control"
                                                    value="@dateValue" required>
