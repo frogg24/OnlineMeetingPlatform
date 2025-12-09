@@ -22,7 +22,7 @@ namespace Web.Controllers
             var regReq = new
             {
                 Username = username,
-                Email = email,
+                Email = email.ToLower(),
                 Password = password,
                 ConfirmPassword = confirmPassword,
                 isNotificationOn = isNotificationOn
@@ -43,7 +43,7 @@ namespace Web.Controllers
 
                 var loginRequest = new
                 {
-                    Email = email,
+                    Email = email.ToLower(),
                     Password = password
                 };
 
