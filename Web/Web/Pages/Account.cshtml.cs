@@ -27,32 +27,20 @@ namespace Web.Pages
             {
                 try
                 {
-                    //TODO: оптимизировать этот ужас
+                    var userMeetingsUrl = $"api/meeting/getusermeetings?userId={userId}";
+                    var userMeetingsData = await APIClient.GetAsync<UserMeetings>(userMeetingsUrl);
 
-                    // ѕолучаем меропри€ти€, где пользователь €вл€етс€ организатором
-                    var userMeetingsUrl = $"api/meeting/getlist?managerId={userId}";
-                    UserMeetings = await APIClient.GetAsync<List<MeetingViewModel>>(userMeetingsUrl) ?? new List<MeetingViewModel>();
-
-                    // ѕолучаем меропри€ти€, в которых участвует пользователь
-                    var participantMeetingsUrl = $"api/meeting/getlistusers?userId={userId}";
-                    UserMeetingParticipations = await APIClient.GetAsync<List<MeetingUserViewModel>>(participantMeetingsUrl) ?? new List<MeetingUserViewModel>();
-
-                    // ƒл€ каждого участи€ получаем полную информацию о меропри€тии
-                    foreach (var meetingUser in UserMeetingParticipations)
+                    if (userMeetingsData != null)
                     {
-                        var meetingUrl = $"api/meeting/getlist?id={meetingUser.MeetingId}";
-                        var meetings = await APIClient.GetAsync<List<MeetingViewModel>>(meetingUrl);
-                        if (meetings != null && meetings.Any())
-                        {
-                            ParticipantMeetings.AddRange(meetings);
-                        }
+                        UserMeetings = userMeetingsData.UserMeetingsAsOrganizer;
+                        ParticipantMeetings = userMeetingsData.UserMeetingsAsParticipant;
                     }
-
-                    // ”бираем дубликаты меропри€тий
-                    ParticipantMeetings = ParticipantMeetings
-                        .GroupBy(m => m.Id)
-                        .Select(g => g.First())
-                        .ToList();
+                    else
+                    {
+                        UserMeetings = new List<MeetingViewModel>();
+                        ParticipantMeetings = new List<MeetingViewModel>();
+                        UserMeetingParticipations = new List<MeetingUserViewModel>();
+                    }
                 }
                 catch (System.Exception ex)
                 {

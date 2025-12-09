@@ -16,5 +16,6 @@ namespace DataModels.Storages
         Task<MeetingViewModel?> Insert(MeetingViewModel model);
         Task<MeetingViewModel?> Update(MeetingViewModel model);
         Task<MeetingViewModel?> Delete(MeetingViewModel model);
+        Task<UserMeetings> GetUserMeetings(int userId);
     }
 }

@@ -15,5 +15,6 @@ namespace DataModels.Services
         Task<bool> Create(MeetingViewModel model);
         Task<bool> Update(MeetingViewModel model);
         Task<bool> Delete(MeetingViewModel model);
+        Task<UserMeetings?> ReadUserMeetings(int userId);
     }
 }

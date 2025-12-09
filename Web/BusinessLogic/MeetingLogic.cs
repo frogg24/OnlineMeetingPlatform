@@ -9,10 +9,12 @@ namespace BusinessLogic
     public class MeetingLogic : IMeetingService
     {
         private readonly IMeetingStorage _meetingStorage;
+        private readonly IMeetingUserService _meetingUserService;
 
-        public MeetingLogic(IMeetingStorage meetingStorage)
+        public MeetingLogic(IMeetingStorage meetingStorage, IMeetingUserService meetingUserService)
         {
             _meetingStorage = meetingStorage;
+            _meetingUserService = meetingUserService;
         }
 
         public async Task<List<MeetingViewModel>?> ReadList(MeetingSearchModel? model)
@@ -113,6 +115,12 @@ namespace BusinessLogic
             {
                 throw new ArgumentException("Дата должна быть указана", nameof(model.Date));
             }
+        }
+
+        public async Task<UserMeetings?> ReadUserMeetings(int userId)
+        {
+            var result = await _meetingStorage.GetUserMeetings(userId);
+            return result;
         }
     }
 }

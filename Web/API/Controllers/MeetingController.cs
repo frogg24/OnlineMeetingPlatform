@@ -216,5 +216,24 @@ namespace API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserMeetings([FromQuery] int userId)
+        {
+            try
+            {
+                if (userId <= 0)
+                {
+                    return BadRequest(new { message = "UserId должен быть положительным числом" });
+                }
+
+                var result = await _meetingService.ReadUserMeetings(userId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

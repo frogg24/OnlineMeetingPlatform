@@ -132,5 +132,31 @@ namespace Database.Implements
             await context.SaveChangesAsync();
             return meeting.GetViewModel;
         }
+
+        public async Task<UserMeetings> GetUserMeetings(int userId)
+        {
+            using var context = new Database();
+
+            // Получаем мероприятия, где пользователь является организатором
+            var userMeetingsAsOrganizer = await context.Meetings
+                .Where(m => m.ManagerId == userId)
+                .Select(x => x.GetViewModel)
+                .ToListAsync();
+
+            // Получаем мероприятия, в которых пользователь является участником
+            var userMeetingsAsParticipant = await context.MeetingUsers
+                .Where(mu => mu.UserId == userId)
+                .Join(context.Meetings,
+                      mu => mu.MeetingId,
+                      m => m.Id,
+                      (mu, m) => m.GetViewModel)
+                .ToListAsync();
+
+            return new UserMeetings
+            {
+                UserMeetingsAsOrganizer = userMeetingsAsOrganizer,
+                UserMeetingsAsParticipant = userMeetingsAsParticipant
+            };
+        }
     }
 }
